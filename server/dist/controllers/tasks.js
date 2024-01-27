@@ -25,11 +25,13 @@ const createTask = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (existingTitle.length !== 0) {
             return res.sendStatus(400);
         }
-        const [day, month, year] = due_date.split('/').map(Number);
+        const [day, month, year] = due_date.split("/").map(Number);
         const dateObject = new Date(year, month - 1, day);
         const currentDate = new Date();
         if (dateObject <= currentDate) {
-            return res.status(400).json({ error: 'Entered date must be after the current date.' });
+            return res
+                .status(400)
+                .json({ error: "Entered date must be after the current date." });
         }
         yield (0, taskSchema_1.createTaskData)({
             title,
@@ -55,7 +57,8 @@ const getTasks = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (tasks.length === 0) {
             return res.sendStatus(404);
         }
-        return res.status(200).json(tasks);
+        const reversTask = tasks.reverse();
+        return res.status(200).json(reversTask);
     }
     catch (error) {
         console.log(error);

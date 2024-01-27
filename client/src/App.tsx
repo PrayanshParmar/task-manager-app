@@ -12,21 +12,21 @@ import Login from './pages/login-page';
 import Register from './pages/register-page';
 import Dashborad from './pages/dashboard-page';
 import NotFound from './pages/not-found';
+import TaskPage from './pages/task-page';
 
-
+export const queryClient = new QueryClient(
+  {
+      defaultOptions: {
+        queries: {
+          staleTime: 1000,
+          refetchOnWindowFocus: false,
+        },
+      },
+    }
+  );
 function App() {
 
-  const queryClient = new QueryClient(
-    {
-        defaultOptions: {
-          queries: {
-            staleTime: 1000,
-            refetchOnWindowFocus: false,
-            retry: false,
-          },
-        },
-      }
-    );
+ 
   
   const router = createBrowserRouter([
     {
@@ -45,6 +45,10 @@ function App() {
       path: '/dashboard',
       element: <Dashborad />,
   },
+  {
+    path: '/dashboard/:taskid',
+    element: <TaskPage />,
+},
   {
     path: '/*',
     element: <NotFound />,

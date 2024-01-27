@@ -2,33 +2,37 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { GoPlus, GoX } from "react-icons/go";
 import TaskCard from "../components/task-card";
+import { queryClient } from "../App";
+import { formatDate } from "../utils/format-date";
+import { useNavigate } from "react-router-dom";
 
 const Dashborad = () => {
+    const redirect = useNavigate();
   const [toggle, setToogle] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [due_date, setDuedate] = useState("");
-  const redirect = useNavigate();
 
-  const { data: tasks } = useQuery({
+  const {
+    data: tasks,
+    isPending,
+    isError,
+  } = useQuery({
     queryKey: ["tasks"],
     queryFn: async () => {
       const res = await axios.get("/api/v1/tasks");
       return res;
     },
   });
-  console.log(tasks?.data);
-
 
   const mutation = useMutation({
     mutationFn: (addTask) => {
       return axios.post("/api/v1/tasks", addTask);
     },
-    onSuccess() {
-        redirect('/dashboard')
+    onSuccess: async () => {
+      return await queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
     onError: (error: AxiosError) => {},
   });
@@ -42,8 +46,12 @@ const Dashborad = () => {
     setToogle(!toggle);
   };
 
+  if (isError) {
+    redirect("/login");
+  }
+
   return (
-    <div className="w-full h-fit bg-zinc-950 py-4 text-white text-center">
+    <div className="w-full h-full bg-zinc-950 py-4 text-white text-center">
       <h2 className=" text-blue-500  font-semibold text-2xl sm:text-3xl">
         My Task
       </h2>
@@ -130,7 +138,7 @@ const Dashborad = () => {
             </div>
           </div>
           {toggle ? (
-            <div className=" flex flex-col justify-between items-center">
+            <div className="sm:hidden flex flex-col justify-between items-center">
               <div className=" flex flex-col items-start gap-1 ">
                 <span>Title</span>
                 <input
@@ -187,13 +195,25 @@ const Dashborad = () => {
           )}
         </form>
         <div className=" w-full h-fit px-5 py-3 bg-black rounded-lg ">
+          {mutation.isError || isError ? (
+            <div className=" w-full h-screen flex items-center justify-center">
+              <h3>Error....</h3>
+            </div>
+          ) : null}
+
+          {mutation.isPending || isPending ? (
+            <div className=" w-full h-screen flex items-center justify-center">
+              <h3>loading....</h3>
+            </div>
+          ) : null}
+
           <div className="w-full my-4 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 max-sm:justify-items-center ">
-            {tasks?.data.map((task: any) => (
+            {tasks?.data.map((task: any, index: KeyType) => (
               <TaskCard
-                key={task.id}
+                key={index}
                 title={task.title}
                 description={task.description}
-                due_date={task.due_date}
+                due_date={formatDate(task.due_date)}
                 id={task._id}
               />
             ))}

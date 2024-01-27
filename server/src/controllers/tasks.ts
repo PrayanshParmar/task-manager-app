@@ -25,22 +25,21 @@ export const createTask = async (
     }
 
     const existingTitle = await getTaskByTitle(title);
-    
-    
 
     if (existingTitle.length !== 0) {
       return res.sendStatus(400);
     }
-    
 
-    const [day, month, year] = due_date.split('/').map(Number);
+    const [day, month, year] = due_date.split("/").map(Number);
 
     const dateObject = new Date(year, month - 1, day);
 
     const currentDate = new Date();
 
     if (dateObject <= currentDate) {
-      return res.status(400).json({ error: 'Entered date must be after the current date.' });
+      return res
+        .status(400)
+        .json({ error: "Entered date must be after the current date." });
     }
     await createTaskData({
       title,
@@ -68,8 +67,9 @@ export const getTasks = async (req: express.Request, res: express.Response) => {
     if (tasks.length === 0) {
       return res.sendStatus(404);
     }
+    const reversTask = tasks.reverse();
 
-    return res.status(200).json(tasks);
+    return res.status(200).json(reversTask);
   } catch (error) {
     console.log(error);
     return res.sendStatus(400);
