@@ -11,7 +11,7 @@ import { formatDate } from "../utils/format-date";
 const TaskPage = () => {
   let { taskid } = useParams();
   const [model, setModel] = useState(false);
-  const redirect = useNavigate();  
+  const redirect = useNavigate();
   const {
     data: taskDetails,
     isPending,
@@ -23,8 +23,7 @@ const TaskPage = () => {
       return res;
     },
     staleTime: 20000,
-  },
-  );
+  });
 
   const [operationType, setOperationType] = useState<string | null>(null);
 
@@ -50,11 +49,11 @@ const TaskPage = () => {
     update.mutate({ title, description, due_date });
   };
 
-  const [title, setTitle] = useState(taskDetails?.data.title|| "");
-  const [description, setDescription] = useState(taskDetails?.data.description|| "");
-  const [due_date, setDuedate] = useState(
-    formatDate(taskDetails?.data.due_date|| "")
+  const [title, setTitle] = useState(taskDetails?.data[0].title || "");
+  const [description, setDescription] = useState(
+    taskDetails?.data[0].description || ""
   );
+  const [due_date, setDuedate] = useState(taskDetails?.data[0].due_date || "");
 
   const deleteMutation = useMutation({
     mutationFn: () => {
@@ -64,14 +63,16 @@ const TaskPage = () => {
       handleModel(null);
       return redirect("/dashboard");
     },
-    onError: (error: AxiosError) => {
-       
-    },
+    onError: (error: AxiosError) => {},
   });
   const onDelete = async (e: React.MouseEvent) => {
     deleteMutation.mutate();
   };
   const updateModel = (
+    <>
+      <h2 className=" flex flex-row justify-start items-center text-[28px]  ">
+        <span className=" text-red-500" >Edit</span>
+      </h2>
     <form onSubmit={onSubmit} className=" flex flex-col justify-start gap-2 ">
       <div className=" w-full h-fit ">
         <span className=" text-xl">Title</span>
@@ -131,36 +132,42 @@ const TaskPage = () => {
         </button>
       </div>
     </form>
+    </>
   );
 
   const deleteModel = (
-    <div className=" flex flex-col justify-start gap-2">
-      <p className="text-neutral-400 text-base text-center my-2">
-        Are you sure you want to <span className=" text-rose-500">delete</span>{" "}
-        task?{" "}
-      </p>
-      <div className=" w-full h-fit py-2 flex flex-row justify-end gap-3 ">
-        <button
-          onClick={() => handleModel(null)}
-          className=" mt-2 w-fit h-fit px-3 py-2 rounded-md text-white bg-rose-500 hover:bg-rose-600"
-          type="button"
-        >
-          Cancle
-        </button>
-        <button
-          onClick={onDelete}
-          className=" mt-2 w-fit h-fit px-3 py-2 rounded-md text-white bg-blue-500 hover:bg-blue-600"
-          type="button"
-        >
-          Delete
-        </button>
+    <>
+      <h2 className=" flex flex-row justify-start items-center text-[28px]  ">
+        <span className=" text-red-500" >Delete</span>
+      </h2>
+      <div className=" flex flex-col justify-start gap-2">
+        <p className="text-neutral-400 text-base text-center my-2">
+          Are you sure you want to{" "}
+          <span className=" text-rose-500">delete</span> task?{" "}
+        </p>
+        <div className=" w-full h-fit py-2 flex flex-row justify-end gap-3 ">
+          <button
+            onClick={() => handleModel(null)}
+            className=" mt-2 w-fit h-fit px-3 py-2 rounded-md text-white bg-emerald-500 hover:bg-emerald-600"
+            type="button"
+          >
+            Cancle
+          </button>
+          <button
+            onClick={onDelete}
+            className=" mt-2 w-fit h-fit px-3 py-2 rounded-md text-white bg-rose-500 hover:bg-rose-600"
+            type="button"
+          >
+            Delete
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 
-  if(isError){
+  if (isError) {
     console.log("error");
-    redirect('/dashboard');
+    redirect("/dashboard");
   }
   return (
     <>
@@ -172,16 +179,16 @@ const TaskPage = () => {
         <div className=" my-12 max-w-3xl  w-full items-center  m-auto gap-6 text-white">
           <div className=" w-full h-fit px-5 py-3 bg-black rounded-lg  flex flex-col items-center text-center gap-3">
             <h2 className=" w-full text-blue-500 h-fit pb-2 font-semibold text-xl sm:text-2xl border-b border-slate-600 capitalize ">
-              {taskDetails?.data.title}
+              {taskDetails?.data[0].title}
             </h2>
-            <p className=" w-full h-fit break-words text-base text-slate-300  sm:text-xl ">
-              {taskDetails?.data.description}
+            <p className=" w-full h-fit break-words text-[14px] text-slate-300  sm:text-[18px] ">
+              {taskDetails?.data[0].description}
             </p>
-            <div className="w-full h-fit break-words text-base text-slate-300 sm:text-xl flex flex-row justify-between">
-              <div className=" flex justify-center gap-2 ">
+            <div className="w-full h-fit break-words text-base text-slate-300 sm:text-xl flex flex-row items-center justify-between">
+              <div className=" flex flex-row max-sm:flex-col  justify-center gap-2 ">
                 <span>Due date: </span>
                 <span className=" text-rose-500 ">
-                  {formatDate(taskDetails?.data.due_date)}
+                  {taskDetails?.data[0].due_date}
                 </span>
               </div>
               <div className=" text-blue-500 flex gap-2">

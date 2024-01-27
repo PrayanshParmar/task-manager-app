@@ -29,7 +29,8 @@ const Dashborad = () => {
 
   const mutation = useMutation({
     mutationFn: (addTask) => {
-      return axios.post("/api/v1/tasks", addTask);
+      return axios.post("/api/v1/tasks", addTask)
+      
     },
     onSuccess: async () => {
       return await queryClient.invalidateQueries({ queryKey: ["tasks"] });
@@ -46,9 +47,7 @@ const Dashborad = () => {
     setToogle(!toggle);
   };
 
-  if (isError) {
-    redirect("/login");
-  }
+  
 
   return (
     <div className="w-full h-full bg-zinc-950 py-4 text-white text-center">
@@ -197,9 +196,10 @@ const Dashborad = () => {
         <div className=" w-full h-fit px-5 py-3 bg-black rounded-lg ">
           {mutation.isError || isError ? (
             <div className=" w-full h-screen flex items-center justify-center">
-              <h3>Error....</h3>
+              <h3 className=" text-slate-400 sm:text-2xl text-xl ">Create you first task</h3>
             </div>
           ) : null}
+
 
           {mutation.isPending || isPending ? (
             <div className=" w-full h-screen flex items-center justify-center">
@@ -213,8 +213,8 @@ const Dashborad = () => {
                 key={index}
                 title={task.title}
                 description={task.description}
-                due_date={formatDate(task.due_date)}
-                id={task._id}
+                due_date={task.due_date}
+                id={task.id}
               />
             ))}
           </div>

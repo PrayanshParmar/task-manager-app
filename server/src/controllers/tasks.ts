@@ -1,12 +1,15 @@
 import express from "express";
+import {v4 as uuidv4 } from "uuid"
 import {
   getTaskByTitle,
+} from "../models/taskSchema";
+ import {
   createTaskData,
-  getTaskByAuthorId,
   getTaskById,
   updateTaskById,
+  getTaskByAuthorId,
   deleteTaskById,
-} from "../models/taskSchema";
+ } from "../models/taskDynamo";
 
 export const createTask = async (
   req: express.Request,
@@ -41,10 +44,11 @@ export const createTask = async (
         .status(400)
         .json({ error: "Entered date must be after the current date." });
     }
-    await createTaskData({
+    const data = await createTaskData({
+      id: uuidv4(),
       title,
       description,
-      due_date: dateObject,
+      due_date,
       author_id: userData.id,
     });
 
@@ -64,11 +68,11 @@ export const getTasks = async (req: express.Request, res: express.Response) => {
     }
 
     const tasks = await getTaskByAuthorId(userData.id);
-    if (tasks.length === 0) {
+    if (tasks?.length === 0) {
       return res.sendStatus(404);
     }
-    const reversTask = tasks.reverse();
-
+    const reversTask =  tasks !== undefined ? tasks.reverse() : []
+    
     return res.status(200).json(reversTask);
   } catch (error) {
     console.log(error);
@@ -93,12 +97,14 @@ export const getTasksById = async (
       return res.sendStatus(400);
     }
 
+    console.log(userData.id);
     const checkValidUser = await getTaskById(taskId, userData.id);
 
     if (!checkValidUser) {
       return res.sendStatus(403);
     }
-
+    
+    
     const task = await getTaskById(taskId, userData.id);
     if (!task) {
       return res.sendStatus(404);
@@ -106,7 +112,7 @@ export const getTasksById = async (
     return res.status(200).json(task);
   } catch (error) {
     console.log(error);
-    return res.sendStatus(400);
+    return res.sendStatus(500);
   }
 };
 
