@@ -5,7 +5,6 @@ import {
   
 }  from "@tanstack/react-query"
 
-import { ReactQueryDevtools} from "@tanstack/react-query-devtools";
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Home from './pages/home-page';
 import Login from './pages/login-page';
@@ -59,7 +58,6 @@ function App() {
     <>
     <QueryClientProvider client={queryClient}>
     <RouterProvider router={router} />
-    <ReactQueryDevtools/>
     </QueryClientProvider>
     
     </>
