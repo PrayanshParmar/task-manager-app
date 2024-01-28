@@ -1,7 +1,7 @@
 import { PutCommand, ScanCommand, DeleteCommand, GetCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { documentClient } from "../db/dynamoClientProvider";
 
-const TableName = "tasks";
+const TableName = String(process.env.DYNAMODB_TASKS_TABLE);
 
 
 export const createTaskData = async (values: Record<string, any>) => {
