@@ -20,7 +20,9 @@ const TaskPage = () => {
   } = useQuery({
     queryKey: ["taskDetails", taskid],
     queryFn: async () => {
-      const res = await axios.get(`${API_URL}/api/v1/tasks/${taskid}`);
+      const res = await axios.get(`${API_URL}/api/v1/tasks/${taskid}`, {
+        withCredentials: true,
+      });
       return res;
     },
     staleTime: 20000,
@@ -35,7 +37,9 @@ const TaskPage = () => {
 
   const update = useMutation({
     mutationFn: (updateTask) => {
-      return axios.put(`${API_URL}/api/v1/tasks/${taskid}`, updateTask);
+      return axios.put(`${API_URL}/api/v1/tasks/${taskid}`, updateTask, {
+        withCredentials: true,
+      });
     },
     onSuccess: async () => {
       handleModel(null);
@@ -58,7 +62,9 @@ const TaskPage = () => {
 
   const deleteMutation = useMutation({
     mutationFn: () => {
-      return axios.delete(`${API_URL}/api/v1/tasks/${taskid}`);
+      return axios.delete(`${API_URL}/api/v1/tasks/${taskid}`, {
+        withCredentials: true,
+      });
     },
     onSuccess: async () => {
       handleModel(null);

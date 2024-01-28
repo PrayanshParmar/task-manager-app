@@ -22,14 +22,18 @@ const Dashborad = () => {
   } = useQuery({
     queryKey: ["tasks"],
     queryFn: async () => {
-      const res = await axios.get(`${API_URL}/api/v1/tasks`);
+      const res = await axios.get(`${API_URL}/api/v1/tasks`, {
+        withCredentials: true,
+      });
       return res;
     },
   });
 
   const mutation = useMutation({
     mutationFn: (addTask) => {
-      return axios.post(`${API_URL}/api/v1/tasks`, addTask)
+      return axios.post(`${API_URL}/api/v1/tasks`, addTask, {
+        withCredentials: true,
+      })
       
     },
     onSuccess: async () => {

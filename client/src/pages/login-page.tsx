@@ -15,7 +15,9 @@ const Login = () => {
 
   const mutation = useMutation({
     mutationFn: (loginUser) => {
-      return axios.post(`${API_URL}/api/v1/login`, loginUser);
+      return axios.post(`${API_URL}/api/v1/login`, loginUser, {
+        withCredentials: true,
+      });
     },
     onSuccess: () => {
       redirect("/dashboard");

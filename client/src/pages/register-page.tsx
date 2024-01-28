@@ -14,7 +14,9 @@ const Register = () => {
 
     const mutation = useMutation({
         mutationFn: (createUser) => {
-          return axios.post(`${API_URL}/api/v1/register`, createUser);
+          return axios.post(`${API_URL}/api/v1/register`, createUser, {
+            withCredentials: true,
+          });
         },
         onSuccess: () => {
           redirect("/login");
