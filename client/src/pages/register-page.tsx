@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Form from "../components/form";
 import axios, { AxiosError } from "axios";
 import { useMutation } from "@tanstack/react-query";
-
+import { API_URL } from "../utils/url";
 const Register = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -14,7 +14,7 @@ const Register = () => {
 
     const mutation = useMutation({
         mutationFn: (createUser) => {
-          return axios.post(`${String(process.env.API_URL)}/api/v1/register`, createUser);
+          return axios.post(`${API_URL}/api/v1/register`, createUser);
         },
         onSuccess: () => {
           redirect("/login");

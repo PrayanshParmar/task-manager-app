@@ -3,6 +3,7 @@ import Form from "../components/form";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
+import { API_URL } from "../utils/url";
 
 
 const Login = () => {
@@ -14,7 +15,7 @@ const Login = () => {
 
   const mutation = useMutation({
     mutationFn: (loginUser) => {
-      return axios.post(`${String(process.env.API_URL)}/api/v1/login`, loginUser);
+      return axios.post(`${API_URL}/api/v1/login`, loginUser);
     },
     onSuccess: () => {
       redirect("/dashboard");
