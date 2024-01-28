@@ -6,7 +6,7 @@ import { MdOutlineDelete } from "react-icons/md";
 import { useNavigate, useParams } from "react-router-dom";
 import Model from "../components/model";
 import { queryClient } from "../App";
-import { formatDate } from "../utils/format-date";
+
 
 const TaskPage = () => {
   let { taskid } = useParams();
@@ -19,7 +19,7 @@ const TaskPage = () => {
   } = useQuery({
     queryKey: ["taskDetails", taskid],
     queryFn: async () => {
-      const res = await axios.get(`/api/v1/tasks/${taskid}`);
+      const res = await axios.get(`${String(process.env.API_URL)}/api/v1/tasks/${taskid}`);
       return res;
     },
     staleTime: 20000,
@@ -34,7 +34,7 @@ const TaskPage = () => {
 
   const update = useMutation({
     mutationFn: (updateTask) => {
-      return axios.put(`/api/v1/tasks/${taskid}`, updateTask);
+      return axios.put(`${String(process.env.API_URL)}/api/v1/tasks/${taskid}`, updateTask);
     },
     onSuccess: async () => {
       handleModel(null);
@@ -57,7 +57,7 @@ const TaskPage = () => {
 
   const deleteMutation = useMutation({
     mutationFn: () => {
-      return axios.delete(`/api/v1/tasks/${taskid}`);
+      return axios.delete(`${String(process.env.API_URL)}/api/v1/tasks/${taskid}`);
     },
     onSuccess: async () => {
       handleModel(null);

@@ -1,15 +1,14 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
-
 import React, { useState } from "react";
 import { GoPlus, GoX } from "react-icons/go";
 import TaskCard from "../components/task-card";
 import { queryClient } from "../App";
-import { formatDate } from "../utils/format-date";
-import { useNavigate } from "react-router-dom";
+
+
 
 const Dashborad = () => {
-    const redirect = useNavigate();
+
   const [toggle, setToogle] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -22,14 +21,14 @@ const Dashborad = () => {
   } = useQuery({
     queryKey: ["tasks"],
     queryFn: async () => {
-      const res = await axios.get("/api/v1/tasks");
+      const res = await axios.get(`${String(process.env.API_URL)}/api/v1/tasks`);
       return res;
     },
   });
 
   const mutation = useMutation({
     mutationFn: (addTask) => {
-      return axios.post("/api/v1/tasks", addTask)
+      return axios.post(`${String(process.env.API_URL)}/api/v1/tasks`, addTask)
       
     },
     onSuccess: async () => {

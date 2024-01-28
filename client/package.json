@@ -2,7 +2,6 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://zqlzchtlonbzjqr7k5d62w7wci0wxuzc.lambda-url.ap-south-1.on.aws/",
   "dependencies": {
     "@tanstack/react-query": "^5.17.19",
     "@tanstack/react-query-devtools": "^5.17.21",
