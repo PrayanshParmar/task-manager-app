@@ -11,7 +11,7 @@ export const isAuthenticated = async (
     const jwtToken = req.cookies["jwt-token"];
    
     if (!jwtToken) {
-      return res.sendStatus(404);
+      return res.sendStatus(403);
     }
     const verify = verifyJwtToken(jwtToken);
     
