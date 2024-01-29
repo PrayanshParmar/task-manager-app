@@ -34,6 +34,7 @@ export const login = async (req: express.Request, res: express.Response) => {
         .cookie("jwt-token", token, {
           httpOnly: true,
           secure: true,
+          sameSite: "none"
         })
         .sendStatus(200);
     }
