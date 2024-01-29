@@ -1,25 +1,22 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
-
+import { ImExit } from "react-icons/im";
 import React, { useState } from "react";
 import { GoPlus, GoX } from "react-icons/go";
 import TaskCard from "../components/task-card";
 import { queryClient } from "../App";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../utils/url";
+import Model from "../components/model";
 
 const Dashborad = () => {
-    const redirect = useNavigate();
+  const redirect = useNavigate();
   const [toggle, setToogle] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [due_date, setDuedate] = useState("");
-
-  const {
-    data: tasks,
-    isPending,
-    isError,
-  } = useQuery({
+  const [model, setModel] = useState(false);
+  const tasks = useQuery({
     queryKey: ["tasks"],
     queryFn: async () => {
       const res = await axios.get(`${API_URL}/api/v1/tasks`, {
@@ -29,12 +26,16 @@ const Dashborad = () => {
     },
   });
 
+  if(tasks.isError && tasks.error?.message === "Request failed with status code 403"){
+    redirect('/login');
+    
+  }
+
   const mutation = useMutation({
     mutationFn: (addTask) => {
       return axios.post(`${API_URL}/api/v1/tasks`, addTask, {
         withCredentials: true,
-      })
-      
+      });
     },
     onSuccess: async () => {
       return await queryClient.invalidateQueries({ queryKey: ["tasks"] });
@@ -51,13 +52,76 @@ const Dashborad = () => {
     setToogle(!toggle);
   };
 
+  const logout = useQuery({
+    queryKey: ["logout"],
+    enabled: false,
+    queryFn: async () => {
+      const res = await axios.get(`${API_URL}/api/v1/logout`, {
+        withCredentials: true,
+      });
+      return res;
+    },
+  });
+
   
+  const onlogout  = () => {
+    logout.refetch();
+    if (logout.isSuccess) {
+      redirect("/login");
+    }
+  }
+  const handleLogout = () => {
+    setModel(!model);
+  };
+
+  const logoutModel = (
+    <>
+      <h2 className=" flex flex-row justify-start items-center text-[28px]  ">
+        <span className=" text-red-500" >Logout</span>
+      </h2>
+      <div className=" flex flex-col justify-start gap-2">
+        <p className="text-neutral-400 text-base text-center my-2">
+          Are you sure you want to{" "}
+          <span className=" text-rose-500 font-semibold">Logout</span> ?{" "}
+        </p>
+        <div className=" w-full h-fit py-2 flex flex-row justify-end gap-3 ">
+          <button
+            onClick={handleLogout}
+            className=" mt-2 w-fit h-fit px-3 py-2 rounded-md text-white bg-emerald-500 hover:bg-emerald-600"
+            type="button"
+          >
+            Cancle
+          </button>
+          <button
+            onClick={onlogout}
+            className=" mt-2 w-fit h-fit px-3 py-2 rounded-md text-white bg-rose-500 hover:bg-rose-600"
+            type="button"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    </>
+  );
 
   return (
-    <div className="w-full h-full bg-zinc-950 py-4 text-white text-center">
-      <h2 className=" text-blue-500  font-semibold text-2xl sm:text-3xl">
-        My Task
-      </h2>
+    <>
+    {model ? (
+        <Model body={logoutModel} />
+      ) : null}
+     <div className="w-full h-full bg-zinc-950 py-4 text-white text-center">
+      <div className=" h-fit flex max-w-3xl lg:max-w-6xl w-full   mx-auto ">
+        <h2 className=" flex-1 justify-center text-blue-500  font-semibold text-2xl sm:text-3xl">
+          My Task
+        </h2>
+        <div
+          onClick={handleLogout}
+          className=" w-fit h-fit p-2 cursor-pointer rounded-md border border-blue-500 hover:border-rose-500 bg-transparent hover:bg-rose-500 text-blue-500 hover:text-white"
+        >
+          <ImExit title="Logout" />
+        </div>
+      </div>
+
       <div className="  my-2 flex flex-col max-w-3xl lg:max-w-6xl w-full items-center  mx-auto gap-6">
         <form
           onSubmit={onSubmit}
@@ -198,21 +262,22 @@ const Dashborad = () => {
           )}
         </form>
         <div className=" w-full h-fit px-5 py-3 bg-black rounded-lg ">
-          {mutation.isError || isError ? (
+          {mutation.isError || tasks.isError ? (
             <div className=" w-full h-screen flex items-center justify-center">
-              <h3 className=" text-slate-400 sm:text-2xl text-xl ">Create you first task</h3>
+              <h3 className=" text-slate-400 sm:text-2xl text-xl ">
+                Create you first task
+              </h3>
             </div>
           ) : null}
 
-
-          {mutation.isPending || isPending ? (
+          {mutation.isPending || tasks.isPending ? (
             <div className=" w-full h-screen flex items-center justify-center">
               <h3>loading....</h3>
             </div>
           ) : null}
 
           <div className="w-full my-4 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8 max-sm:justify-items-center ">
-            {tasks?.data.map((task: any, index: KeyType) => (
+            {tasks?.data?.data.map((task: any, index: KeyType) => (
               <TaskCard
                 key={index}
                 title={task.title}
@@ -225,6 +290,7 @@ const Dashborad = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
