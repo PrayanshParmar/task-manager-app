@@ -14,8 +14,7 @@ export const login = async (req: express.Request, res: express.Response) => {
     const user = await getUserByEmail(email).select(
       "+authentication.salt +authentication.password"
     );
- 
-    
+
     if (!user) {
       return res.sendStatus(401);
     } else {
@@ -34,7 +33,7 @@ export const login = async (req: express.Request, res: express.Response) => {
         .cookie("jwt-token", token, {
           httpOnly: true,
           secure: true,
-          sameSite: "none"
+          sameSite: "none",
         })
         .sendStatus(200);
     }
@@ -75,10 +74,13 @@ export const register = async (req: express.Request, res: express.Response) => {
   }
 };
 
-
 export const logout = async (req: express.Request, res: express.Response) => {
   try {
-    res.clearCookie("jwt-token");
+    res.clearCookie("jwt-token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
     return res.sendStatus(200);
   } catch (error) {
     console.log(error);
