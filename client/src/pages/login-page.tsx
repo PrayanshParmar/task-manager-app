@@ -15,26 +15,6 @@ const schema = z.object({
       required_error: "Password is required",
     })
     .min(4, { message: "Password must contain at least 4 characters" }),
-  // .refine(
-  //   (value) => {
-  //     // Check if the password contains symbols, numbers, uppercase, and lowercase characters
-  //     const symbolRegex = /[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/@]/;
-  //     const numberRegex = /\d/;
-  //     const uppercaseRegex = /[A-Z]/;
-  //     const lowercaseRegex = /[a-z]/;
-
-  //     return (
-  //       symbolRegex.test(value) &&
-  //       numberRegex.test(value) &&
-  //       uppercaseRegex.test(value) &&
-  //       lowercaseRegex.test(value)
-  //     );
-  //   },
-  //   {
-  //     message:
-  //       "Password must contain symbols, numbers, uppercase, and lowercase characters",
-  //   }
-  // ),
 });
 
 type formfield = z.infer<typeof schema>;
@@ -43,7 +23,6 @@ const Login = () => {
   const [viewPassword, setViewPassword] = useState(false);
 
   const navigate = useNavigate();
-  const title = "Login";
 
   const handlePasswordView = useCallback(() => {
     setViewPassword(!viewPassword);

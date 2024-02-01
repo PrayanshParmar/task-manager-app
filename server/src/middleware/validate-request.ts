@@ -19,7 +19,43 @@ const registrationSchema = loginSchema.extend({
     .string({
       required_error: "Username is required",
     })
-    .min(4, { message: "Username must contain at least 4 characters" }),
+    .min(3, { message: "username must contain at least 3 characters" })
+    .max(20, { message: "username must not exceed 20 characters" })
+    .refine(
+      (value) => {
+        // Check for alphanumeric characters, @, +, and -
+        const validRegex = /^[a-zA-Z0-9@+\-]+$/;
+        return validRegex.test(value);
+      },
+      {
+        message:
+          "Username must only contain alphanumeric characters, @, +, and -",
+      }
+    ),
+    password: z
+    .string({
+      required_error: "Password is required",
+    })
+    .min(4, { message: "Password must contain at least 4 characters" })
+    .refine(
+      (value) => {
+        const symbolRegex = /[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/@]/;
+        const numberRegex = /\d/;
+        const uppercaseRegex = /[A-Z]/;
+        const lowercaseRegex = /[a-z]/;
+
+        return (
+          symbolRegex.test(value) &&
+          numberRegex.test(value) &&
+          uppercaseRegex.test(value) &&
+          lowercaseRegex.test(value)
+        );
+      },
+      {
+        message:
+          "Password must contain symbols, numbers, uppercase, and lowercase characters",
+      }
+    ),
 });
 
 const validateRequest = async (
